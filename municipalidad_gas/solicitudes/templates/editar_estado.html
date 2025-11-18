@@ -1,0 +1,110 @@
+{% extends 'solicitudes/base.html' %}
+
+{% block title %}Editar Estado - {{ solicitud.rut }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">✏️ Cambiar Estado de Solicitud</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6>Información del Solicitante:</h6>
+                    <p class="mb-1"><strong>RUT:</strong> {{ solicitud.rut }}</p>
+                    <p class="mb-1"><strong>Nombre:</strong> {{ solicitud.nombres }} {{ solicitud.apellidos }}</p>
+                    <p class="mb-1"><strong>Comuna:</strong> {{ solicitud.comuna }}</p>
+                    <p class="mb-0"><strong>Estado Actual:</strong> 
+                        <span class="badge estado-{{ solicitud.estado|lower }}">
+                            {{ solicitud.get_estado_display }}
+                        </span>
+                    </p>
+                </div>
+
+                <hr>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="estado" class="form-label"><strong>Nuevo Estado:</strong></label>
+                        <select name="estado" id="estado" class="form-select" required>
+                            <option value="">Seleccione un estado...</option>
+                            <option value="PENDIENTE" {% if solicitud.estado == 'PENDIENTE' %}selected{% endif %}>
+                                ⏳ Pendiente
+                            </option>
+                            <option value="ACEPTADA" {% if solicitud.estado == 'ACEPTADA' %}selected{% endif %}>
+                                ✅ Aceptada
+                            </option>
+                            <option value="RECHAZADA" {% if solicitud.estado == 'RECHAZADA' %}selected{% endif %}>
+                                ❌ Rechazada
+                            </option>
+                            <option value="EXPIRADA" {% if solicitud.estado == 'EXPIRADA' %}selected{% endif %}>
+                                📅 Expirada
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <small>
+                            💡 <strong>Nota:</strong> Al cambiar a "Aceptada", se registrará automáticamente 
+                            la fecha de aceptación y la solicitud expirará automáticamente después de 30 días.
+                        </small>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            💾 Actualizar Estado
+                        </button>
+                        <a href="{% url 'detalle_solicitud' solicitud.id %}" class="btn btn-secondary">
+                            ← Cancelar y Volver
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('estado').addEventListener('change', function() {
+    const selectedValue = this.value;
+    const infoAlert = document.querySelector('.alert-info');
+    
+    if (selectedValue === 'ACEPTADA') {
+        infoAlert.innerHTML = `
+            <small>
+                💡 <strong>Nota:</strong> Al cambiar a "Aceptada", se registrará automáticamente 
+                la fecha de aceptación y la solicitud expirará automáticamente después de 30 días.
+            </small>
+        `;
+        infoAlert.className = 'alert alert-success';
+    } else if (selectedValue === 'RECHAZADA') {
+        infoAlert.innerHTML = `
+            <small>
+                ⚠️ <strong>Nota:</strong> La solicitud será marcada como rechazada. 
+                El usuario no podrá acceder al descuento.
+            </small>
+        `;
+        infoAlert.className = 'alert alert-danger';
+    } else if (selectedValue === 'EXPIRADA') {
+        infoAlert.innerHTML = `
+            <small>
+                📅 <strong>Nota:</strong> La solicitud será marcada como expirada. 
+                El usuario deberá realizar una nueva solicitud.
+            </small>
+        `;
+        infoAlert.className = 'alert alert-secondary';
+    } else {
+        infoAlert.innerHTML = `
+            <small>
+                💡 <strong>Nota:</strong> Al cambiar a "Aceptada", se registrará automáticamente 
+                la fecha de aceptación y la solicitud expirará automáticamente después de 30 días.
+            </small>
+        `;
+        infoAlert.className = 'alert alert-info';
+    }
+});
+</script>
+{% endblock %}

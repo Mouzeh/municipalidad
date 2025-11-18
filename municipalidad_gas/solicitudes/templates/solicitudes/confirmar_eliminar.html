@@ -1,0 +1,86 @@
+{% extends 'solicitudes/base.html' %}
+
+{% block title %}Confirmar Eliminación - {{ solicitud.rut }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">⚠️ Confirmar Eliminación</h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                    <h5 class="text-danger">¿Está seguro que desea eliminar esta solicitud?</h5>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h6>Información de la Solicitud a Eliminar:</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr>
+                                <td><strong>RUT:</strong></td>
+                                <td>{{ solicitud.rut }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nombre:</strong></td>
+                                <td>{{ solicitud.nombres }} {{ solicitud.apellidos }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Comuna:</strong></td>
+                                <td>{{ solicitud.comuna }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Teléfono:</strong></td>
+                                <td>{{ solicitud.telefono }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Estado:</strong></td>
+                                <td>
+                                    <span class="badge estado-{{ solicitud.estado|lower }}">
+                                        {{ solicitud.get_estado_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fecha Solicitud:</strong></td>
+                                <td>{{ solicitud.fecha_solicitud|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h6>⚠️ Esta acción no se puede deshacer</h6>
+                    <p class="mb-0">
+                        Una vez eliminada, toda la información de esta solicitud se perderá 
+                        permanentemente y no podrá ser recuperada.
+                    </p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'detalle_solicitud' solicitud.id %}" class="btn btn-secondary me-md-2">
+                            ← Cancelar y Volver
+                        </a>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está absolutamente seguro? Esta acción es irreversible.')">
+                            🗑️ Sí, Eliminar Permanentemente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Confirmación adicional con JavaScript
+document.querySelector('form').addEventListener('submit', function(e) {
+    if (!confirm('¿ESTÁ ABSOLUTAMENTE SEGURO?\n\nEsta acción eliminará permanentemente la solicitud de {{ solicitud.rut }}.\n\nEsta operación NO se puede deshacer.')) {
+        e.preventDefault();
+    }
+});
+</script>
+{% endblock %}

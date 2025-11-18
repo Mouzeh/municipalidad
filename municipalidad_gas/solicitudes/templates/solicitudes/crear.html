@@ -1,0 +1,90 @@
+{% extends 'solicitudes/base.html' %}
+
+{% block title %}Nueva Solicitud - Gas Licuado{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">📝 Nueva Solicitud de Descuento Gas Licuado</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" onsubmit="return validarFormulario()">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_rut" class="form-label">RUT *</label>
+                            {{ form.rut }}
+                            <small class="form-text text-muted">Formato: 12345678-9</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="id_telefono" class="form-label">Teléfono *</label>
+                            {{ form.telefono }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_nombres" class="form-label">Nombres *</label>
+                            {{ form.nombres }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="id_apellidos" class="form-label">Apellidos *</label>
+                            {{ form.apellidos }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_direccion" class="form-label">Dirección *</label>
+                        {{ form.direccion }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_comuna" class="form-label">Comuna *</label>
+                        {{ form.comuna }}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            ✅ Enviar Solicitud
+                        </button>
+                        <a href="{% url 'buscar_solicitud' %}" class="btn btn-outline-primary">
+                            🔍 Buscar Solicitud Existente
+                        </a>
+                        <a href="{% url 'listar_solicitudes' %}" class="btn btn-outline-secondary">
+                            📋 Administrar Solicitudes
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function validarFormulario() {
+    const rut = document.getElementById('id_rut').value;
+    const telefono = document.getElementById('id_telefono').value;
+    
+    // Validar RUT
+    const rutPattern = /^\d{1,8}-[\dkK]$/;
+    if (!rutPattern.test(rut)) {
+        alert('Por favor ingrese un RUT válido (Formato: 12345678-9)');
+        return false;
+    }
+    
+    // Validar teléfono
+    const digitosTelefono = telefono.replace(/\D/g, '');
+    if (digitosTelefono.length < 9) {
+        alert('El teléfono debe tener al menos 9 dígitos');
+        return false;
+    }
+    
+    return true;
+}
+</script>
+{% endblock %}
