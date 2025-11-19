@@ -1,0 +1,212 @@
+{% extends 'solicitudes/base.html' %}
+
+{% block title %}Buscar Solicitud por RUT - Gas Licuado{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">🔍 Buscar Solicitud por RUT</h4>
+                    <span class="badge bg-light text-dark">Vendedores</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-light border">
+                    <h6>💡 Instrucciones de Búsqueda:</h6>
+                    <p class="mb-0">
+                        Ingrese el RUT del solicitante para verificar si cuenta con una solicitud 
+                        activa para descuento en gas licuado. Solo se acepta búsqueda por RUT.
+                    </p>
+                </div>
+
+                <form method="post" id="buscarForm">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label for="id_rut" class="form-label"><strong>RUT del Solicitante:</strong></label>
+                            {{ form.rut }}
+                            <div class="form-text">
+                                Formato requerido: 12345678-9 (con guión y dígito verificador)
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-info btn-lg w-80 h-80">
+                                🔍 Buscar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Resultados de la Búsqueda -->
+                {% if resultados is not None %}
+                    <div class="mt-4">
+                        <hr>
+                        
+                        {% if resultados %}
+                            <h5 class="text-success">
+                                ✅ Se encontraron {{ resultados|length }} solicitud{{ resultados|length|pluralize:"es" }}
+                            </h5>
+                            
+                            {% for solicitud in resultados %}
+                            <div class="card mt-3 border-{% if solicitud.estado == 'ACEPTADA' %}success{% elif solicitud.estado == 'PENDIENTE' %}warning{% else %}danger{% endif %}">
+                                <div class="card-header bg-{% if solicitud.estado == 'ACEPTADA' %}success{% elif solicitud.estado == 'PENDIENTE' %}warning{% else %}danger{% endif %} text-white">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">Solicitud #{{ solicitud.id }}</h6>
+                                        <span class="badge bg-light text-dark">
+                                            {{ solicitud.get_estado_display }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="mb-2">
+                                                <strong>👤 Nombre:</strong><br>
+                                                {{ solicitud.nombres }} {{ solicitud.apellidos }}
+                                            </p>
+                                            <p class="mb-2">
+                                                <strong>📞 Teléfono:</strong><br>
+                                                {{ solicitud.telefono }}
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-2">
+                                                <strong>🏠 Dirección:</strong><br>
+                                                {{ solicitud.direccion }}
+                                            </p>
+                                            <p class="mb-2">
+                                                <strong>📍 Comuna:</strong><br>
+                                                {{ solicitud.comuna }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <p class="mb-1">
+                                                <strong>📅 Fecha Solicitud:</strong><br>
+                                                {{ solicitud.fecha_solicitud|date:"d/m/Y H:i" }}
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            {% if solicitud.fecha_aceptacion %}
+                                            <p class="mb-1">
+                                                <strong>✅ Fecha Aceptación:</strong><br>
+                                                {{ solicitud.fecha_aceptacion|date:"d/m/Y H:i" }}
+                                            </p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Alertas según estado -->
+                                    {% if solicitud.estado == 'ACEPTADA' %}
+                                    <div class="alert alert-success mt-3 mb-0">
+                                        <h6>✅ Solicitud Aceptada</h6>
+                                        <p class="mb-0">
+                                            El solicitante puede acceder al descuento en gas licuado.
+                                            {% if solicitud.fecha_aceptacion %}
+                                                <br><small>Aceptada el: {{ solicitud.fecha_aceptacion|date:"d/m/Y" }}</small>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    {% elif solicitud.estado == 'PENDIENTE' %}
+                                    <div class="alert alert-warning mt-3 mb-0">
+                                        <h6>⏳ Solicitud Pendiente</h6>
+                                        <p class="mb-0">
+                                            La solicitud está en proceso de revisión. El solicitante 
+                                            no puede acceder al descuento aún.
+                                        </p>
+                                    </div>
+                                    {% elif solicitud.estado == 'RECHAZADA' %}
+                                    <div class="alert alert-danger mt-3 mb-0">
+                                        <h6>❌ Solicitud Rechazada</h6>
+                                        <p class="mb-0">
+                                            La solicitud fue rechazada. El solicitante no puede acceder al descuento.
+                                        </p>
+                                    </div>
+                                    {% elif solicitud.estado == 'EXPIRADA' %}
+                                    <div class="alert alert-secondary mt-3 mb-0">
+                                        <h6>📅 Solicitud Expirada</h6>
+                                        <p class="mb-0">
+                                            La solicitud ha expirado. El solicitante debe realizar una nueva solicitud.
+                                        </p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                            
+                        {% else %}
+                            <div class="alert alert-warning text-center">
+                                <h5>❌ No se encontraron solicitudes</h5>
+                                <p class="mb-3">
+                                    No existe ninguna solicitud registrada para el RUT ingresado.
+                                </p>
+                                <div class="d-grid gap-2 d-md-block">
+                                    <a href="{% url 'crear_solicitud' %}" class="btn btn-success">
+                                        ➕ Crear Nueva Solicitud
+                                    </a>
+                                    <button onclick="document.getElementById('buscarForm').reset(); document.getElementById('id_rut').focus();" 
+                                            class="btn btn-outline-secondary">
+                                        🔄 Nueva Búsqueda
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                    <a href="{% url 'crear_solicitud' %}" class="btn btn-success">
+                        ➕ Nueva Solicitud
+                    </a>
+                    <a href="{% url 'listar_solicitudes' %}" class="btn btn-outline-primary">
+                        📋 Administrar Todas las Solicitudes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const rutInput = document.getElementById('id_rut');
+    const buscarForm = document.getElementById('buscarForm');
+    
+    // Formatear RUT mientras se escribe
+    rutInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/[^0-9kK]/g, '');
+        
+        if (value.length > 1) {
+            value = value.slice(0, -1) + '-' + value.slice(-1);
+        }
+        
+        e.target.value = value.toUpperCase();
+    });
+    
+    // Validar  RUT
+    buscarForm.addEventListener('submit', function(e) {
+        const rut = rutInput.value.trim();
+        const rutPattern = /^\d{1,8}-[\dkK]$/;
+        
+        if (!rutPattern.test(rut)) {
+            e.preventDefault();
+            alert('❌ Por favor ingrese un RUT válido\n\nFormato requerido: 12345678-9\n(Incluya el guión y dígito verificador)');
+            rutInput.focus();
+            return false;
+        }
+    });
+    
+    // Enforcar RUT al actualizar
+    rutInput.focus();
+});
+</script>
+{% endblock %}

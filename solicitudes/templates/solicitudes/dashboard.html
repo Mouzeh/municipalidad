@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Municipalidades Chile{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2>
+        <i class="bi bi-speedometer2"></i> 
+        Bienvenido/a, {{ user.get_full_name }}
+    </h2>
+    <p class="text-muted">
+        {% if user.rol == 'administrador' %}
+            Panel de Control - Administrador
+        {% elif user.rol == 'vendedor' %}
+            Panel de Control - Vendedor
+        {% endif %}
+    </p>
+</div>
+
+{% if user.rol == 'administrador' %}
+    <!-- Dashboard Administrador -->
+    <div class="row mb-4">
+        <!-- Estadísticas -->
+        <div class="col-md-4 mb-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-1">Total Solicitudes</h6>
+                            <h2 class="mb-0">{{ total_solicitudes|default:0 }}</h2>
+                        </div>
+                        <i class="bi bi-folder-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">Pendientes</h6>
+                            <h2 class="mb-0">{{ solicitudes_pendientes|default:0 }}</h2>
+                        </div>
+                        <i class="bi bi-clock-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-1">Total Usuarios</h6>
+                            <h2 class="mb-0">{{ total_usuarios|default:0 }}</h2>
+                        </div>
+                        <i class="bi bi-people-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Accesos Rápidos -->
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-folder"></i> Gestión de Solicitudes
+                    </h5>
+                    <p class="card-text">Administra todas las solicitudes de descuentos.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'listar_solicitudes' %}" class="btn btn-primary">
+                            <i class="bi bi-list"></i> Ver Todas las Solicitudes
+                        </a>
+                        <a href="{% url 'listar_solicitudes' %}?estado=pendiente" class="btn btn-outline-warning">
+                            <i class="bi bi-clock"></i> Ver Pendientes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-people"></i> Gestión de Usuarios
+                    </h5>
+                    <p class="card-text">Administra usuarios del sistema.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'listar_usuarios' %}" class="btn btn-primary">
+                            <i class="bi bi-list"></i> Ver Todos los Usuarios
+                        </a>
+                        <a href="{% url 'crear_usuario' %}" class="btn btn-outline-success">
+                            <i class="bi bi-person-plus"></i> Crear Nuevo Usuario
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% elif user.rol == 'vendedor' %}
+    <!-- Dashboard Vendedor -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-search" style="font-size: 5rem; color: var(--primary-color);"></i>
+                    <h3 class="mt-4 mb-3">Buscar Solicitud</h3>
+                    <p class="text-muted mb-4">
+                        Ingresa el RUT del solicitante para buscar su solicitud
+                    </p>
+                    <a href="{% url 'buscar_solicitud' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search"></i> Ir a Búsqueda
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<!-- Información del Perfil -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-person-circle"></i> Tu Perfil
+                </h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Nombre:</dt>
+                            <dd class="col-sm-8">{{ user.get_full_name }}</dd>
+                            
+                            <dt class="col-sm-4">Email:</dt>
+                            <dd class="col-sm-8">{{ user.email }}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Rol:</dt>
+                            <dd class="col-sm-8">
+                                {% if user.rol == 'administrador' %}
+                                    <span class="badge bg-primary">Administrador</span>
+                                {% elif user.rol == 'vendedor' %}
+                                    <span class="badge bg-success">Vendedor</span>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4">Usuario desde:</dt>
+                            <dd class="col-sm-8">{{ user.date_joined|date:"d/m/Y" }}</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <a href="{% url 'ver_perfil' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-eye"></i> Ver Perfil Completo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

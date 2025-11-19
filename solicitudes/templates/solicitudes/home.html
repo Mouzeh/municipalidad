@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Municipalidades Chile{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-lg-12">
+        <div class="card bg-primary text-white shadow-lg">
+            <div class="card-body p-5 text-center">
+                <i class="bi bi-building" style="font-size: 5rem;"></i>
+                <h1 class="display-4 mt-3 mb-3">Agrupación de Municipalidades de Chile</h1>
+                <p class="lead mb-4">
+                    Plataforma de Descuentos en Cilindros de Gas Licuado
+                </p>
+                <p class="mb-4">
+                    Accede a beneficios exclusivos en la compra de cilindros de gas para tu hogar
+                </p>
+                <a href="{% url 'ingresar_solicitud' %}" class="btn btn-light btn-lg">
+                    <i class="bi bi-file-earmark-plus"></i> Solicitar Descuento
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Características -->
+<div class="row mb-5">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-clipboard-check text-success" style="font-size: 3rem;"></i>
+                <h4 class="mt-3 mb-3">Fácil y Rápido</h4>
+                <p class="text-muted">
+                    Completa el formulario en pocos minutos y obtén tu descuento
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-shield-check text-primary" style="font-size: 3rem;"></i>
+                <h4 class="mt-3 mb-3">Seguro y Confiable</h4>
+                <p class="text-muted">
+                    Tus datos están protegidos y son tratados de forma confidencial
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-graph-up-arrow text-info" style="font-size: 3rem;"></i>
+                <h4 class="mt-3 mb-3">Grandes Beneficios</h4>
+                <p class="text-muted">
+                    Ahorra en cada compra de cilindros de gas licuado
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cómo Funciona -->
+<div class="row mb-5">
+    <div class="col-lg-12">
+        <div class="card shadow">
+            <div class="card-header bg-light">
+                <h3 class="mb-0">
+                    <i class="bi bi-info-circle"></i> ¿Cómo Funciona?
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 80px; height: 80px; font-size: 2rem;">
+                            1
+                        </div>
+                        <h5>Ingresa tu Solicitud</h5>
+                        <p class="text-muted">Completa el formulario con tus datos</p>
+                    </div>
+                    
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 80px; height: 80px; font-size: 2rem;">
+                            2
+                        </div>
+                        <h5>Revisamos tu Solicitud</h5>
+                        <p class="text-muted">Verificamos que cumples los requisitos</p>
+                    </div>
+                    
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 80px; height: 80px; font-size: 2rem;">
+                            3
+                        </div>
+                        <h5>Aprobamos tu Descuento</h5>
+                        <p class="text-muted">Te contactamos con la confirmación</p>
+                    </div>
+                    
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 80px; height: 80px; font-size: 2rem;">
+                            <i class="bi bi-check-lg"></i>
+                        </div>
+                        <h5>¡Disfruta tu Beneficio!</h5>
+                        <p class="text-muted">Recibe tu cilindro con descuento</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card bg-light shadow">
+            <div class="card-body text-center p-5">
+                <h3 class="mb-3">¿Listo para Comenzar?</h3>
+                <p class="lead text-muted mb-4">
+                    Solicita tu descuento ahora y empieza a ahorrar
+                </p>
+                <div class="d-grid gap-2 d-md-block">
+                    <a href="{% url 'ingresar_solicitud' %}" class="btn btn-primary btn-lg me-md-2">
+                        <i class="bi bi-file-earmark-plus"></i> Ingresar Solicitud
+                    </a>
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
